@@ -3,7 +3,7 @@ CC = g++
 TAR = main.out
 MYSQL = -lmysqlclient -I/usr/include/mysql/ -L/usr/lib/mysql
 PTHREAD = -lpthread
-OBJ = main.o data.h global.h locker.h request.h server.h threadpool.h tools.h user.h
+OBJ = main.o global.h locker.h request.h server.h threadpool.h tools.h user.h
 
 vpath %.h ../header
 
