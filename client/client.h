@@ -992,7 +992,7 @@ bool Client::check_date_legal(string s)
 bool Client::check_pwd_legal(string s)
 {
     int len = s.length();
-    if (len < 6)
+    if (len < 5)
         return false;
 
     if (len > 30)
