@@ -193,8 +193,12 @@ void Client::run()
         return;
     }
 
-    //标准输入流注册到epoll上
-    addfd(epollfd, STDIN_FILENO);
+    //将标准输入流设为非阻塞的
+    int oldop = fcntl(STDIN_FILENO, F_GETFL);
+    int newop = oldop | O_NONBLOCK;
+    fcntl(STDIN_FILENO, F_SETFL, newop);
+
+    addfd(epollfd, STDIN_FILENO, EPOLLIN | EPOLLET);
     addfd(epollfd, pipefd[0]);
 
     //创建计时线程
@@ -210,9 +214,15 @@ void Client::run()
             if (fd == STDIN_FILENO)
             {
                 int len = read(fd, buf, BUF_SIZE - 100);
-
                 if (len == BUF_SIZE - 100)
                 {
+                    //检测到命令过长，则提示错误并读空标准输入流
+                    while (1)
+                    {
+                        len = read(fd, buf, BUF_SIZE - 100);
+                        if (len < BUF_SIZE - 00)
+                            break;
+                    }
                     cout << info_to_user[0] << endl;
                     continue;
                 }
@@ -363,6 +373,7 @@ void Client::parse_from_user()
     {
         //退出
         client_live = 0;
+        cout << "已退出" << endl;
         break;
     }
 
